@@ -1,0 +1,67 @@
+server:
+  port: 8084
+
+spring:
+  kafka:
+    bootstrap-servers: kafka-srini-csreenu-3ace.k.aivencloud.com:10391
+    properties:
+      security.protocol: SASL_SSL
+      ssl.truststore.location: classpath:certs/kafka.truststore.jks
+      ssl.truststore.password: changeit
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: >
+      org.apache.kafka.common.security.scram.ScramLoginModule required
+      username="${AIVEN_KAFKA_USERNAME:avnadmin}"
+      password="${AIVEN_KAFKA_PASSWORD}";
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/order_db
+app:
+  kafka:
+    topics:
+      order-created: order-created-topic
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,circuitbreakers,retries
+
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%level] [corrId=%X{correlationId}] %msg%n"
+
+resilience4j:
+  retry:
+    instances:
+      inventoryService:
+        maxAttempts: 3
+        waitDuration: 2s
+        retryExceptions:
+          - feign.RetryableException
+          - feign.FeignException$ServiceUnavailable
+        ignoreExceptions:
+          - io.github.resilience4j.circuitbreaker.CallNotPermittedException
+
+  circuitbreaker:
+    instances:
+      inventoryService:
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s

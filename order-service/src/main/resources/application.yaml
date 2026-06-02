@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: order-service
+
+  config:
+    import: "configserver:http://localhost:8888"
+
+resilience4j:
+  retry:
+    instances:
+      inventoryService:
+        maxAttempts: 3
+        waitDuration: 2s
+        retryExceptions:
+          - feign.RetryableException
+          - feign.FeignException$ServiceUnavailable
+        ignoreExceptions:
+          - io.github.resilience4j.circuitbreaker.CallNotPermittedException
+
+  circuitbreaker:
+    instances:
+      inventoryService:
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,circuitbreakers,retries
