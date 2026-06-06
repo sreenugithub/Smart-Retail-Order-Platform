@@ -2,6 +2,9 @@ server:
   port: 8084
 
 spring:
+  data:
+    mongodb:
+      uri: mongodb://host.docker.internal:27017/inventory_db
   kafka:
     bootstrap-servers: kafka-srini-csreenu-3ace.k.aivencloud.com:10391
     properties:
@@ -10,18 +13,16 @@ spring:
       ssl.truststore.password: changeit
       sasl.mechanism: SCRAM-SHA-256
       sasl.jaas.config: >
-      org.apache.kafka.common.security.scram.ScramLoginModule required
-      username="${AIVEN_KAFKA_USERNAME:avnadmin}"
-      password="${AIVEN_KAFKA_PASSWORD}";
+        org.apache.kafka.common.security.scram.ScramLoginModule required
+        username="avnadmin"
+        password="AVNS_AGdTVt5fOxbKytDli6F";
 
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.add.type.headers: false
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/order_db
+
 app:
   kafka:
     topics:
@@ -30,21 +31,31 @@ app:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://host.docker.internal:8761/eureka/
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,circuitbreakers,retries
-
+        include: health,info,metrics,prometheus,circuitbreakers,retries
   endpoint:
     health:
       show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://host.docker.internal:9411/api/v2/spans
+
 
 logging:
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%level] [corrId=%X{correlationId}] %msg%n"
+    level: "%5p [${spring.application.name:},traceId=%X{traceId:-},spanId=%X{spanId:-}]"
 
 resilience4j:
   retry:

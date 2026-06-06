@@ -5,10 +5,12 @@ import com.retail. inventory_service.dto.InventoryRequest;
 import com.retail. inventory_service.dto.InventoryResponse;
 import com.retail. inventory_service.service.InventoryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/inventory")
 @RequiredArgsConstructor
@@ -28,6 +30,8 @@ public class InventoryController {
     @GetMapping("/{productId}")
     public ResponseEntity<InventoryResponse> getInventory(
             @PathVariable String productId) {
+
+        log.info("Inventory request received for productId={}", productId);
 
         return ResponseEntity.ok(
                 inventoryService.getInventoryByProductId(productId)

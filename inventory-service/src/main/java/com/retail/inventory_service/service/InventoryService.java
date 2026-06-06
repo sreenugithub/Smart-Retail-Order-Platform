@@ -8,8 +8,10 @@ import com.retail.inventory_service.exception.DuplicateInventoryException;
 import com.retail.inventory_service.exception.InventoryNotFoundException;
 import com.retail.inventory_service.repository.InventoryRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InventoryService {
@@ -64,5 +66,29 @@ public class InventoryService {
                 .reservedQuantity(inventory.getReservedQuantity())
                 .status(inventory.getStatus())
                 .build();
+    }
+    public void reduceStock(
+            String productId,
+            Integer orderedQuantity) {
+
+        Inventory inventory =
+                inventoryRepository
+                        .findByProductId(productId)
+                        .orElseThrow(
+                                () -> new InventoryNotFoundException(productId)
+                        );
+
+        inventory.setAvailableQuantity(
+                inventory.getAvailableQuantity()
+                        - orderedQuantity
+        );
+
+        inventoryRepository.save(inventory);
+
+        log.info(
+                "Stock Updated Product={} Remaining={}",
+                productId,
+                inventory.getAvailableQuantity()
+        );
     }
 }

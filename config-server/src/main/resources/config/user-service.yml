@@ -4,13 +4,31 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/user_db
+      uri: mongodb://host.docker.internal:27017/inventory_db
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://host.docker.internal:8761/eureka/
 
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,circuitbreakers,retries
+  endpoint:
+    health:
+      show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  zipkin:
+    tracing:
+      endpoint: http://host.docker.internal:9411/api/v2/spans
 logging:
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%level] [corrId=%X{correlationId}] %msg%n"
+    level: "%5p [${spring.application.name:},traceId=%X{traceId:-},spanId=%X{spanId:-}]"

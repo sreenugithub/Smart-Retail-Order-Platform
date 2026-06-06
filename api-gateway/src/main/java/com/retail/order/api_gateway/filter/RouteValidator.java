@@ -14,6 +14,8 @@ public class RouteValidator {
                     "/api/auth/login",
                     "/api/inventory",
                     "/api/orders",
+                    "/actuator/prometheus",
+                    "/actuator/info",
                     "/actuator/health"
             );
 

@@ -1,0 +1,2 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.retail.inventory_service.config.KafkaSslStoreLocationEnvironmentPostProcessor

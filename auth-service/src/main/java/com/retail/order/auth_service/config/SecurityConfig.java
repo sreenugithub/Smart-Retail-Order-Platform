@@ -29,7 +29,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                        .requestMatchers("/actuator/health", "/actuator/info","/actuator/prometheus").permitAll()
 
                         .anyRequest().authenticated()
 
