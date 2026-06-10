@@ -1,59 +1,38 @@
 server:
   port: 8083
+
 spring:
+  application:
+    name: inventory-service
+
   data:
     mongodb:
-      uri: mongodb://host.docker.internal:27017/inventory_db
+      uri: mongodb://localhost:27017/inventory_db
 
   kafka:
     bootstrap-servers: kafka-srini-csreenu-3ace.k.aivencloud.com:10391
-
     ssl:
       trust-store-location: classpath:certs/kafka.truststore.jks
       trust-store-password: changeit
-      trust-store-type: PKCS12
-
+      trust-store-type: JKS
     properties:
       security.protocol: SASL_SSL
-
       sasl.mechanism: SCRAM-SHA-256
-
       sasl.jaas.config: >
         org.apache.kafka.common.security.scram.ScramLoginModule required
         username="avnadmin"
         password="AVNS_AGdTVt5fOxbKytDli6F";
-
     consumer:
-
       group-id: inventory-group
-
       auto-offset-reset: earliest
-
       key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-
       properties:
-
         spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
-
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-
         spring.json.trusted.packages: "*"
-
         spring.json.value.default.type: com.retail.inventory_service.event.OrderCreatedEvent
-
         spring.json.use.type.headers: false
-
-app:
-  kafka:
-    topics:
-      order-created: order-created-topic
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://host.docker.internal:8761/eureka/
 
 management:
   endpoints:
@@ -72,7 +51,15 @@ management:
       probability: 1.0
   zipkin:
     tracing:
-      endpoint: http://host.docker.internal:9411/api/v2/spans
-logging:
-  pattern:
-    level: "%5p [${spring.application.name:},traceId=%X{traceId:-},spanId=%X{spanId:-}]"
+      endpoint: http://zipkin:9411/api/v2/spans
+app:
+  kafka:
+    topics:
+      order-created: order-created-topic
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/

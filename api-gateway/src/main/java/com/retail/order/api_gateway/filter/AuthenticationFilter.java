@@ -2,6 +2,7 @@ package com.retail.order.api_gateway.filter;
 
 import com.retail.order.api_gateway.service.JwtService;
 import io.jsonwebtoken.Claims;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -19,9 +20,13 @@ public class AuthenticationFilter
 
     private final RouteValidator routeValidator;
     private final JwtService jwtService;
-
+    @PostConstruct
+    public void init() {
+        System.out.println("AUTHENTICATION FILTER LOADED");
+    }
     @Override
     public Mono<Void> filter(
+
             ServerWebExchange exchange,
             GatewayFilterChain chain) {
 
@@ -29,7 +34,8 @@ public class AuthenticationFilter
                 exchange.getRequest()
                         .getURI()
                         .getPath();
-
+        System.out.println("GATEWAY PATH = " + path);
+        System.out.println("IS SECURED = " + routeValidator.isSecured.test(path));
         if (routeValidator.isSecured.test(path)) {
 
             if (!exchange.getRequest()

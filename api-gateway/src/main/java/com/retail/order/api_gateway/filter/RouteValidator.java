@@ -12,8 +12,6 @@ public class RouteValidator {
             List.of(
                     "/api/auth/register",
                     "/api/auth/login",
-                    "/api/inventory",
-                    "/api/orders",
                     "/actuator/prometheus",
                     "/actuator/info",
                     "/actuator/health"
@@ -22,5 +20,5 @@ public class RouteValidator {
     public Predicate<String> isSecured =
             uri -> openApiEndpoints
                     .stream()
-                    .noneMatch(uri::contains);
+                    .noneMatch(uri::startsWith);
 }

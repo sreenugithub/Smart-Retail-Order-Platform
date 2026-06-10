@@ -9,29 +9,31 @@ spring:
       routes:
 
         - id: auth-service
-          uri: lb://AUTH-SERVICE
+          uri: http://auth-service:8081
           predicates:
             - Path=/api/auth/**
 
         - id: user-service
-          uri: lb://USER-SERVICE
+          uri: http://user-service:8082
           predicates:
             - Path=/api/users/**
 
         - id: inventory-service
-          uri: lb://INVENTORY-SERVICE
+          uri: http://inventory-service:8083
           predicates:
             - Path=/api/inventory/**
 
         - id: order-service
-          uri: lb://ORDER-SERVICE
+          uri: http://order-service:8084
           predicates:
             - Path=/api/orders/**
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://host.docker.internal:8761/eureka/
+      defaultZone: http://discovery-server:8761/eureka/
 
 logging:
   pattern:
@@ -55,4 +57,4 @@ management:
 
   zipkin:
     tracing:
-      endpoint: http://host.docker.internal:9411/api/v2/spans
+      endpoint: http://zipkin:9411/api/v2/spans

@@ -3,7 +3,7 @@ spring:
     name: order-service
 
   config:
-    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+    import: optional:configserver:http://config-server:8888
 
 resilience4j:
   retry:

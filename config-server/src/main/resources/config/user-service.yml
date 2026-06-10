@@ -7,9 +7,11 @@ spring:
       uri: mongodb://host.docker.internal:27017/inventory_db
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://host.docker.internal:8761/eureka/
+      defaultZone: http://discovery-server:8761/eureka/
 
 management:
   tracing:

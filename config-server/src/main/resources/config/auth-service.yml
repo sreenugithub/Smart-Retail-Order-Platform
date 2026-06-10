@@ -11,9 +11,11 @@ jwt:
   secret: MyVeryStrongJwtSecretKeyForInterviewProject123456
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://host.docker.internal:8761/eureka/
+      defaultZone: http://discovery-server:8761/eureka/
 logging:
   pattern:
     level: "%5p [${spring.application.name:},traceId=%X{traceId:-},spanId=%X{spanId:-}]"
@@ -36,4 +38,4 @@ management:
 
   zipkin:
     tracing:
-      endpoint: http://host.docker.internal:9411/api/v2/spans
+      endpoint: http://zipkin:9411/api/v2/spans

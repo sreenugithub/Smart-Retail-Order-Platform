@@ -15,8 +15,8 @@ public class OrderCreatedConsumer {
     private final InventoryService inventoryService;
 
     @KafkaListener(
-            topics = "${app.kafka.topics.order-created}",
-            groupId = "${spring.kafka.consumer.group-id}"
+            topics = "${app.kafka.topics.order-created:order-created-topic}",
+            groupId = "${spring.kafka.consumer.group-id:inventory-group}"
     )
     public void consume(
             OrderCreatedEvent event) {
