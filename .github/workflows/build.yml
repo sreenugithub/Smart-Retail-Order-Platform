@@ -5,13 +5,9 @@ on:
     branches:
       - main
       - master
-  pull_request:
-    branches:
-      - main
-      - master
 
 jobs:
-  build:
+  build-and-dockerize:
     runs-on: ubuntu-latest
 
     strategy:
@@ -36,10 +32,15 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Give Gradle permission
+      - name: Grant execute permission
         run: chmod +x gradlew
         working-directory: ${{ matrix.service }}
 
-      - name: Build ${{ matrix.service }}
+      - name: Build JAR
         run: ./gradlew clean build -x test
+        working-directory: ${{ matrix.service }}
+
+      - name: Build Docker Image
+        run: |
+          docker build -t smart-retail/${{ matrix.service }}:latest .
         working-directory: ${{ matrix.service }}
