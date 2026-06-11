@@ -1,0 +1,45 @@
+name: Build Smart Retail Microservices
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service:
+          - discovery-server
+          - config-server
+          - api-gateway
+          - auth-service
+          - user-service
+          - inventory-service
+          - order-service
+          - notification-service
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Give Gradle permission
+        run: chmod +x gradlew
+        working-directory: ${{ matrix.service }}
+
+      - name: Build ${{ matrix.service }}
+        run: ./gradlew clean build -x test
+        working-directory: ${{ matrix.service }}
